@@ -7,6 +7,11 @@ bootstrap
 * https://github.com/...
 * Copyright (c) 2016 Funkhaus; MIT license
 */
+/*!
+* jQuery zoomHaus; version: 1.0
+* https://github.com/...
+* Copyright (c) 2016 Funkhaus; MIT license
+*/
 (function($) {
 
     $.fn.zoomhaus = function(options, cb) {
@@ -15,7 +20,8 @@ bootstrap
 
         // Defaults
         var settings = $.extend({
-            x: null
+            container: window,
+            grow: false     // Will the image need to grow and shrink when moving to and from its container?
         }, options);
 
         // Save window dimensions
@@ -29,7 +35,7 @@ bootstrap
         });
 
         // add the main overlay if it does not exist
-        if ( ! $('body > zoomhaus-overlay').length ){
+        if ( ! $('body > #zoomhaus-overlay').length ){
             $('body').append('<div id="zoomhaus-overlay"></div>');
         }
 
@@ -61,11 +67,25 @@ bootstrap
             // remove body class
             $('body').removeClass('zoomhaus-open').addClass('zoomhaus-transitioning');
 
-            // remove transform styles, fire callback
-            $('#zoomhaus-overlay img').css({
+            var css = {
                 '-webkit-transform': 'none',
                 'transform': 'none'
-            })
+            };
+
+            if( settings.grow ){
+
+                var $target = $('.zoomhaus-target.active');
+
+                // Calculate the aspect ratio of the parent
+                var parentHeight = $target.parent().innerHeight();
+                var diff = $target.innerHeight() - parentHeight;
+                css['-webkit-clip-path'] = 'inset(' + (diff / 2) + 'px 0)';
+                css['clip-path'] = 'inset(' + (diff / 2) + 'px 0)';
+
+            }
+
+            // remove transform styles, fire callback
+            $('#zoomhaus-overlay img').css(css)
             .one($.support.transition.end, function(){
 
                 $('#zoomhaus-overlay').hide().empty();
@@ -81,7 +101,7 @@ bootstrap
         $(document).on('click', '.zoomhaus-open *', closeOverlay);
 
         // listen for a scroll event
-        $(window).scroll(function(){
+        $(settings.container).scroll(function(){
 
             // if overlay is open, close it
             if ( $('body').hasClass('zoomhaus-open') ) closeOverlay();
@@ -122,26 +142,37 @@ bootstrap
                 var imgRect = this.getBoundingClientRect();
 
                 // calculate natural aspect ratio for image
+                // aspect ratio > 1: image is portrait
+                // aspect ratio < 1: image is landscape
                 var naturalRatio = Math.max( $(this).attr('height'), $(this).height() ) / Math.max( $(this).attr('width'), $(this).width() );
 
-                console.log(naturalRatio);
-
-                // get target dimaensions
+                // get target dimensions
                 var targetWidth = Math.min( (winWidth - 100), $(this).attr('width') );
                 var targetHeight = Math.min( (winHeight - 100), $(this).attr('height') );
 
-                console.log( targetWidth, targetHeight );
+                var css = {
+                    transform: 'none',
+                    position: 'absolute',
+                    width: imgRect.width,
+                    left: imgRect.left,
+                    top: imgRect.top,
+                    height: 'auto',
+                };
+
+                // determine if we need any clipping
+                if( settings.grow ){
+
+                    // Calculate the aspect ratio of the parent
+                    var parentHeight = $(this).parent().innerHeight();
+                    var diff = $(this).innerHeight() - parentHeight;
+                    css['-webkit-clip-path'] = 'inset(' + (diff / 2) + 'px 0)';
+                    css['clip-path'] = 'inset(' + (diff / 2) + 'px 0)';
+
+                }
 
                 // clone target image, position it
                 var $newImg = $(this).clone()
-                    .css({
-                        transform: 'none',
-                        position: 'absolute',
-                        width: imgRect.width,
-                        left: imgRect.left,
-                        top: imgRect.top,
-                        height: 'auto',
-                    })
+                    .css( css )
                     .removeClass('active zoomhaus-target');
 
                 // add image into overlay
@@ -188,6 +219,8 @@ bootstrap
 
                     // add transform styling
                     $newImg.css({
+                        '-webkit-clip-path': 'inset(0)',
+                        'clip-path': 'inset(0)',
                         '-webkit-transform': 'scale(' + scale + ')' + ' translate3d(' + (offsets.x * antiScale) + 'px, ' + (offsets.y * antiScale) + 'px, 0)',
                         'transform': 'scale(' + scale + ')' + ' translate3d(' + (offsets.x * antiScale) + 'px, ' + (offsets.y * antiScale) + 'px, 0)'
                     });
