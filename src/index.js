@@ -1,12 +1,7 @@
 import bootstrap from './bootstrap'
-// bootstraps transitions - bootstrap() doesn't work for some reason
+// bootstraps transitions - bootstrap() throws an error for some reason
 bootstrap
 
-/*!
-* jQuery zoomHaus; version: 1.0
-* https://github.com/...
-* Copyright (c) 2016 Funkhaus; MIT license
-*/
 /*!
 * jQuery zoomHaus; version: 1.0
 * https://github.com/...
@@ -21,7 +16,9 @@ bootstrap
         // Defaults
         var settings = $.extend({
             container: window,
-            grow: false     // Will the image need to grow and shrink when moving to and from its container?
+            grow: false,    // Will the image need to grow and shrink when moving to and from its container?,
+            arrows: true,   // Can we page through images with left/right arrow keys?
+            esc: true       // Can we use 'esc' to close an open gallery?
         }, options);
 
         // Save window dimensions
@@ -230,6 +227,75 @@ bootstrap
             });
 
         });
+
+        // Remove event so we don't get duplicates
+        $(document).off('zoomhaus.goto');
+
+        // Change the displayed image without zooming out and in
+        $(document).on('zoomhaus.goto', function(evt, index){
+
+            // Save outgoing and incoming targets
+            var $outgoing = $('.zoomhaus-target.active');
+            var $incoming = $('.zoomhaus-target').eq(index);
+
+            // Set displayed image src and srcset to target
+            $('.zoomhaus-image').attr( 'src', $incoming.attr('src') );
+            $('.zoomhaus-image').attr( 'srcset', $incoming.attr('srcset') );
+
+            // Center the image
+            var $image = $('.zoomhaus-image');
+            $image.css('transform', 'scale(' + $image.data('zoomhaus-scale') + ') translate3d(-50%, -50%, 0)');
+            $image.css('left', '50%');
+            $image.css('top', '50%');
+
+            // Set appropriate classes
+            $outgoing.removeClass('active');
+            $incoming.addClass('active');
+
+            evt.preventDefault();
+
+        });
+
+        // Set up arrow key nav if desired
+        if( settings.arrows && jQuery('body').data('zoomhaus.arrow-nav') === undefined ){
+
+            jQuery(document).keydown(function(evt){
+                var index = $('.zoomhaus-target.active').index( '.zoomhaus-target' );
+
+                switch( evt.which ){
+                    case 37 : // left
+                        index -= 1;
+                        if( index < 0 ){
+                            index = $('.zoomhaus-target').length - 1;
+                        }
+                        break;
+
+                    case 39 : // right
+                        index += 1;
+                        if( index >= $('.zoomhaus-target').length ){
+                            index = 0;
+                        }
+                        break;
+
+                    default: return;
+                }
+
+                jQuery(document).trigger('zoomhaus.goto', [ index ]);
+            });
+
+            jQuery('body').data('zoomhaus.arrow-nav', true);
+        }
+
+        // Set up esc key
+        if( settings.esc && jQuery('body').data('zoomhaus.esc') === undefined ){
+            jQuery(document).keydown(function(evt){
+                if( evt.which == 27 && $('.zoomhaus-open').length ){
+                    closeOverlay()
+                }
+            })
+
+            jQuery('body').data('zoomhaus.esc', true);
+        }
 
         // return $elems
         return this;
