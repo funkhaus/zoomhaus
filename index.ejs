@@ -4,9 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width">
     <title><%= htmlWebpackPlugin.options.title %></title>
+    <link rel="stylesheet" href="zoomhaus.css">
 </head>
 <body>
     <div class="content">
+        <img width="500" height="500" src="http://placehold.it/500x500">
     </div>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </body>
+
+<script>
+
+    $('img').zoomhaus();
+
+</script>
+
 </html>
