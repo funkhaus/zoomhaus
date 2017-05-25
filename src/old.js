@@ -153,16 +153,16 @@
                 //     height: 'auto',
                 // };
 
-                // determine if we need any clipping
-                if( settings.grow ){
-
-                    // Calculate the aspect ratio of the parent
-                    var parentHeight = $(this).parent().innerHeight();
-                    var diff = $(this).innerHeight() - parentHeight;
-                    css['-webkit-clip-path'] = 'inset(' + (diff / 2) + 'px 0)';
-                    css['clip-path'] = 'inset(' + (diff / 2) + 'px 0)';
-
-                }
+                // // determine if we need any clipping
+                // if( settings.grow ){
+                //
+                //     // Calculate the aspect ratio of the parent
+                //     var parentHeight = $(this).parent().innerHeight();
+                //     var diff = $(this).innerHeight() - parentHeight;
+                //     css['-webkit-clip-path'] = 'inset(' + (diff / 2) + 'px 0)';
+                //     css['clip-path'] = 'inset(' + (diff / 2) + 'px 0)';
+                //
+                // }
 
                 // // clone target image, position it
                 // var $newImg = $(this).clone()

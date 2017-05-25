@@ -1,4 +1,4 @@
-export default ( target, $, winDimensions ) => {
+export default ( target, settings, $, winDimensions ) => {
 
     const $target = $(target)
 
@@ -15,6 +15,17 @@ export default ( target, $, winDimensions ) => {
         left: imgRect.left,
         top: imgRect.top,
         height: 'auto',
+    }
+
+    // determine if we need any clipping
+    if( settings.grow ){
+
+        // Calculate the aspect ratio of the parent
+        var parentHeight = $target.parent().innerHeight();
+        var diff = $target.innerHeight() - parentHeight;
+        css['-webkit-clip-path'] = 'inset(' + (diff / 2) + 'px 0)';
+        css['clip-path'] = 'inset(' + (diff / 2) + 'px 0)';
+
     }
 
     // clone target image, position it

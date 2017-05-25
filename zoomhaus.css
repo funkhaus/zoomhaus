@@ -9,8 +9,11 @@
     visibility: hidden;
 }
 .zoomhaus-image {
-    -webkit-transition: -webkit-transform 0.6s ease, left 0.6s ease, top 0.6s ease;
-    transition: transform 0.6s ease, left 0.6s ease, top 0.6s ease;
+    -webkit-clip-path: inset(0 0);
+    clip-path: inset(0 0);
+
+    -webkit-transition: -webkit-transform 0.6s ease, -webkit-clip-path 0.6s ease, left 0.6s ease, top 0.6s ease;
+    transition: transform 0.6s ease, clip-path 0.6s ease, left 0.6s ease, top 0.6s ease;
 }
 .zoomhaus-open #zoomhaus-overlay {
     background: rgba(255, 255, 255, 1);

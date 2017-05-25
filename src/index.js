@@ -14,7 +14,7 @@ bootstrap
         // Defaults
         const settings = $.extend({
             container: window,
-            grow: false,    // Will the image need to grow and shrink when moving to and from its container?
+            grow: true,    // Will the image need to grow and shrink when moving to and from its container?
             arrows: true,   // Can we page through images with left/right arrow keys?
             esc: true       // Can we use 'esc' to close an open gallery?
         }, options)
@@ -58,7 +58,7 @@ bootstrap
                 if ( $('body.zoomhaus-open').length || $('body.zoomhaus-transitioning').length ) return
 
                 // open overlay for this image
-                openOverlay( this, $, win )
+                openOverlay( this, settings, $, win )
 
             })
         })
