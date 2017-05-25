@@ -283,19 +283,19 @@
             jQuery('body').data('zoomhaus.arrow-nav', true);
         }
 
-        // Set up esc key
-        if( settings.esc && jQuery('body').data('zoomhaus.esc') === undefined ){
-            jQuery(document).keydown(function(evt){
-                if( evt.which == 27 && $('.zoomhaus-open').length ){
-                    closeOverlay()
-                }
-            })
-
-            jQuery('body').data('zoomhaus.esc', true);
-        }
-
-        // return $elems
-        return this;
+        // // Set up esc key
+        // if( settings.esc && jQuery('body').data('zoomhaus.esc') === undefined ){
+        //     jQuery(document).keydown(function(evt){
+        //         if( evt.which == 27 && $('.zoomhaus-open').length ){
+        //             closeOverlay()
+        //         }
+        //     })
+        //
+        //     jQuery('body').data('zoomhaus.esc', true);
+        // }
+        //
+        // // return $elems
+        // return this;
     }
 
 }(jQuery));

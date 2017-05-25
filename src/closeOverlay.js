@@ -27,6 +27,28 @@ export default ( $, settings ) => {
 
     }
 
+    let updatingRect = true
+
+    // update ending position to prevent ugly snapping on scroll
+    const updateRect = function(){
+        // get rectangle for active image
+        const $active = $('.zoomhaus-target.active')
+
+        if( $active && $active.length ){
+            const rect = $active.get(0).getBoundingClientRect()
+
+            // set top property on overlay image
+            $('#zoomhaus-overlay img').eq(0).css({
+                top: rect.top
+            })
+        }
+
+        if( updatingRect ){
+            requestAnimationFrame(updateRect)
+        }
+    }
+    requestAnimationFrame(updateRect)
+
     // remove transform styles, fire callback
     $('#zoomhaus-overlay img').css(css)
     .one($.support.transition.end, function(){
@@ -34,6 +56,8 @@ export default ( $, settings ) => {
         $('#zoomhaus-overlay').hide().empty()
         $('.zoomhaus-target.active').removeClass('active')
         $('body').removeClass('zoomhaus-transitioning')
+
+        updatingRect = false
 
     })
     .emulateTransitionEnd(600);

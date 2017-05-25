@@ -35,24 +35,11 @@ bootstrap
             closeOverlay( $, settings )
         })
 
-        // listen for a scroll event
         $(settings.container).scroll(function(){
 
             // if overlay is open, close it
             if ( $('body').hasClass('zoomhaus-open') ) closeOverlay( $, settings )
 
-            // if there is a zoomed image, recalculate base position
-            if ( $('.zoomhaus-target.active').length ){
-
-                // get rectangle for active image
-                var rect = $('.zoomhaus-target.active').get(0).getBoundingClientRect();
-
-                // set top property on overlay image
-                $('#zoomhaus-overlay img').eq(0).css({
-                    top: rect.top
-                });
-
-            }
         });
 
         // now loop through elements and set a listener
@@ -75,6 +62,20 @@ bootstrap
 
             })
         })
+
+        // Set up esc key
+        if( settings.esc && $('body').data('zoomhaus.esc') === undefined ){
+            $(document).keydown(function(evt){
+                if( evt.which == 27 && $('.zoomhaus-open').length ){
+                    closeOverlay($, settings)
+                }
+            })
+
+            $('body').data('zoomhaus.esc', true);
+        }
+
+        // return $elems
+        return this;
 
     }
 
