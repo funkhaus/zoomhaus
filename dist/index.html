@@ -5,10 +5,40 @@
     <meta name="viewport" content="width=device-width">
     <title>Webpack Boilerplate</title>
     <link rel="stylesheet" href="zoomhaus.css">
+    <style>
+
+        .grow-demo {
+            background-image: url('http://placehold.it/600x600');
+            background-position: center;
+            background-size: cover;
+            position: relative;
+            height: 0;
+            width: 200px;
+            padding-bottom: 10%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .grow-demo img {
+            width: 100%;
+            height: auto;
+            opacity: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+    </style>
 </head>
 <body>
     <div class="content">
         <img width="500" height="500" src="http://placehold.it/500x500">
+        <div class="grow-demo">
+            <img width="600" height="600" src="http://placehold.it/600x600">
+        </div>
+        <img width="750" height="500" src="http://placehold.it/750x500">
     </div>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript" src="bundle.js"></script></body>
