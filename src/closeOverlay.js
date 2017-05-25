@@ -4,13 +4,15 @@ export default ( $, settings ) => {
     $('body').removeClass('zoomhaus-open').addClass('zoomhaus-transitioning')
 
     // get rectangle for image as it sits in the page
-    var imgRect = $('.zoomhaus-target.active').get(0).getBoundingClientRect()
+    const imgRect = $('.zoomhaus-target.active').get(0).getBoundingClientRect()
+    const $target = $('.zoomhaus-target.active')
 
     let css = {
         'left': imgRect.left,
         'top': imgRect.top,
-        '-webkit-transform': 'none',
-        'transform': 'none'
+        'width': imgRect.width,
+        '-webkit-transform': $target.css('-webkit-transform'),
+        'transform': $target.css('transform')
     }
 
     // shrink clip-path area to match aspect ratio of parent

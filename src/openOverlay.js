@@ -80,7 +80,9 @@ export default ( target, settings, $, winDimensions ) => {
             'clip-path': 'inset(0)',
             'top': '50%',
             'left': '50%',
-            'transform': 'scale(' + scale + ') translate(-50%, -50%)'
+            'width': targetWidth,
+            '-webkit-transform': '-webkit-translate(-50%, -50%)',
+            'transform': 'translate(-50%, -50%)'
         })
 
     })
