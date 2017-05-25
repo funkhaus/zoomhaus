@@ -11,8 +11,8 @@ export default ( $, settings ) => {
         'left': imgRect.left,
         'top': imgRect.top,
         'width': imgRect.width,
-        '-webkit-transform': $target.css('-webkit-transform'),
-        'transform': $target.css('transform')
+        '-webkit-transform': 'none',
+        'transform': 'none'
     }
 
     // shrink clip-path area to match aspect ratio of parent
