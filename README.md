@@ -15,19 +15,19 @@ That's it!
 
 ### `arrows`
 
-**Default `true`**
+***Boolean. Default `true`***
 
 Can we use arrow keys to navigate through all zoomhaus images?
 
 ### `esc`
 
-**Default `true`**
+***Boolean. Default `true`***
 
 Can we use the 'esc' key to close the zoomhaus gallery?
 
 ### `grow`
 
-**Default `true`**
+***Boolean. Default `true`***
 
 Will a cropped image grow to its full size in the zoomhaus gallery? See the `.grow-demo` div on the included demo (`npm run dev`) for an example implementation.
 
