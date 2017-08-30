@@ -34,7 +34,8 @@ export default ( target, settings, $, winDimensions ) => {
         .removeClass('active zoomhaus-target')
 
     // add image into overlay
-    $('#zoomhaus-overlay').show().html( $newImg.addClass('zoomhaus-image') )
+    $('#zoomhaus-overlay').show()
+    $('#zoomhaus-overlay .image-slot').html( $newImg.addClass('zoomhaus-image') )
 
     // calculate natural aspect ratio for image
     // aspect ratio > 1: image is portrait

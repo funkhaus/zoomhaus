@@ -55,7 +55,8 @@ export default ( $, settings ) => {
     $('#zoomhaus-overlay img').css(css)
     .one($.support.transition.end, function(){
 
-        $('#zoomhaus-overlay').hide().empty()
+        $('#zoomhaus-overlay').hide()
+        $('#zoomhaus-overlay .image-slot').empty()
         $('.zoomhaus-target.active').removeClass('active')
         $('body').removeClass('zoomhaus-transitioning')
 

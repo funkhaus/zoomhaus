@@ -18,7 +18,8 @@ bootstrap
             arrows: true,               // Can we page through images with left/right arrow keys?
             esc: true,                  // Can we use 'esc' to close an open gallery?,
             marginX: 50,                // Margins for expanded image
-            marginY: 50
+            marginY: 50,
+            template: false             // Selector for <template> to place inside the overlay
         }, options)
 
         // Setup window dimension shortcuts and onResize listeners
@@ -26,7 +27,12 @@ bootstrap
 
         // add the main overlay if it does not exist
         if ( ! $('body > #zoomhaus-overlay').length ){
-            $('body').append('<div id="zoomhaus-overlay"></div>')
+            $('body').append('<div id="zoomhaus-overlay"><div class="image-slot"></div><div class="template-slot"></div></div>')
+
+            // add template if we've defined one
+            if( settings.template && $(settings.template).length ){
+                $('#zoomhaus-overlay .template-slot').append( $(settings.template) )
+            }
         }
 
         // add css styling to head

@@ -43,6 +43,12 @@ Minimum horizontal margin of a zoomed-in image, in pixels.
 
 Minimum vertical margin of a zoomed-in image, in pixels.
 
+### `template`
+
+***String. Default `false`***
+
+Selector to use for a template element in the zoomed-in overlay. Moves the template element to the `#zoomhaus-overlay .template-slot` element. Useful for adding arrow keys to the overlay, for example.
+
 ## Development
 1. Clone or fork this repo.
 1. `npm install`
@@ -51,8 +57,9 @@ Minimum vertical margin of a zoomed-in image, in pixels.
 
 -------
 
-Version 2.0.1
+Version 2.0.2
 
 http://funkhaus.us
 
+* 2.0.2 - Added `template`
 * 2.0.1 - Added `marginX` and `marginY`, fixed a vertical sizing bug
