@@ -14,7 +14,7 @@ export default ( target, settings, $, winDimensions ) => {
         width: imgRect.width,
         left: imgRect.left,
         top: imgRect.top,
-        height: 'auto',
+        height: 'auto'
     }
 
     // determine if we need any clipping
@@ -39,11 +39,11 @@ export default ( target, settings, $, winDimensions ) => {
     // calculate natural aspect ratio for image
     // aspect ratio > 1: image is portrait
     // aspect ratio < 1: image is landscape
-    var naturalRatio = Math.max( $(this).attr('height'), $(this).height() ) / Math.max( $(this).attr('width'), $(this).width() )
+    var naturalRatio = Math.max( $(target).attr('height'), $(target).height() ) / Math.max( $(target).attr('width'), $(target).width() )
 
     // get target dimensions
-    var targetWidth = Math.min( (winDimensions.width - 100), $target.attr('width') )
-    var targetHeight = Math.min( (winDimensions.height - 100), $target.attr('height') )
+    var targetWidth = Math.min( (winDimensions.width - settings.marginX * 2), $target.attr('width') )
+    var targetHeight = Math.min( (winDimensions.height - settings.marginY * 2), $target.attr('height') )
 
     // if fitting to width is too tall...
     if ( targetWidth * naturalRatio > targetHeight ){

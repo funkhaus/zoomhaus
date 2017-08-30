@@ -31,6 +31,18 @@ Can we use the 'esc' key to close the zoomhaus gallery?
 
 Will a cropped image grow to its full size in the zoomhaus gallery? See the `.grow-demo` div on the included demo (`npm run dev`) for an example implementation.
 
+### `marginX`
+
+***Number. Default `50`***
+
+Minimum horizontal margin of a zoomed-in image, in pixels.
+
+### `marginY`
+
+***Number. Default `50`***
+
+Minimum vertical margin of a zoomed-in image, in pixels.
+
 ## Development
 1. Clone or fork this repo.
 1. `npm install`
@@ -39,6 +51,8 @@ Will a cropped image grow to its full size in the zoomhaus gallery? See the `.gr
 
 -------
 
-Version 1.1
+Version 2.0.1
 
 http://funkhaus.us
+
+* 2.0.1 - Added `marginX` and `marginY`, fixed a vertical sizing bug

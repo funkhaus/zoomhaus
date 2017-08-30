@@ -14,9 +14,11 @@ bootstrap
         // Defaults
         const settings = $.extend({
             container: window,
-            grow: true,    // Will the image need to grow and shrink when moving to and from its container?
-            arrows: true,   // Can we page through images with left/right arrow keys?
-            esc: true       // Can we use 'esc' to close an open gallery?
+            grow: true,                 // Will the image need to grow and shrink when moving to and from its container?
+            arrows: true,               // Can we page through images with left/right arrow keys?
+            esc: true,                  // Can we use 'esc' to close an open gallery?,
+            marginX: 50,                // Margins for expanded image
+            marginY: 50
         }, options)
 
         // Setup window dimension shortcuts and onResize listeners
