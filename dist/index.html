@@ -51,8 +51,8 @@
     </div>
 
     <div id="overlay-content">
-        <button>Previous Image</button>
-        <button>Next Image</button>
+        <button class="prev">Previous Image</button>
+        <button class="next">Next Image</button>
     </div>
 
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -61,7 +61,16 @@
 <script>
 
     $('img').zoomhaus({
-        template: '#overlay-content'
+        template: '#overlay-content',
+        clickToExit: false
+    });
+
+    $('body').on('click', 'button.next', function(){
+        $(document).trigger('zoomhaus.next');
+    });
+
+    $('body').on('click', 'button.prev', function(){
+        $(document).trigger('zoomhaus.previous');
     });
 
 </script>

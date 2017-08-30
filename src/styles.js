@@ -1,7 +1,5 @@
 let styles = '';
 styles += '#zoomhaus-overlay {';
-    styles += 'pointer-events: none;';
-    styles += '-webkit-pointer-events: none;';
     styles += 'position: fixed;';
     styles += 'display: none;';
     styles += 'height: 100%;';

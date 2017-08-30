@@ -19,7 +19,9 @@ bootstrap
             esc: true,                  // Can we use 'esc' to close an open gallery?,
             marginX: 50,                // Margins for expanded image
             marginY: 50,
-            template: false             // Selector for <template> to place inside the overlay
+            template: false,            // Selector for <template> to place inside the overlay
+            clickToExit: true,          // Does a click anywhere close the overlay when it's open?
+            closeOnScroll: true         // Does a scroll close the open overlay?
         }, options)
 
         // Setup window dimension shortcuts and onResize listeners
@@ -39,16 +41,21 @@ bootstrap
         $('head').append('<style>' + styles + '</style>')
 
         // close overlay when clicking anything
-        $(document).on('click', '.zoomhaus-open', function(){
-            closeOverlay( $, settings )
-        })
+        if( settings.clickToExit ){
+            $(document).on('click', '.zoomhaus-open', function(){
+                $(document).trigger('zoomhaus.close')
+            })
+        }
 
-        $(settings.container).scroll(function(){
+        if( settings.closeOnScroll ){
+            $(settings.container).scroll(function(){
+                // if overlay is open, close it
+                if ( $('body').hasClass('zoomhaus-open') ){
+                    $(document).trigger('zoomhaus.close')
+                }
+            })
+        }
 
-            // if overlay is open, close it
-            if ( $('body').hasClass('zoomhaus-open') ) closeOverlay( $, settings )
-
-        })
 
         // now loop through elements and set a listener
         this.each(function(){
@@ -75,7 +82,7 @@ bootstrap
         if( settings.esc && $('body').data('zoomhaus.esc') === undefined ){
             $(document).keydown(function(evt){
                 if( evt.which == 27 && $('.zoomhaus-open').length ){
-                    closeOverlay($, settings)
+                    $(document).trigger('zoomhaus.close')
                 }
             })
 
@@ -84,6 +91,9 @@ bootstrap
 
         // Remove event so we don't get duplicates
         $(document).off('zoomhaus.goto')
+        $(document).off('zoomhaus.next')
+        $(document).off('zoomhaus.previous')
+        $(document).off('zoomhaus.close')
 
         // Change the displayed image without zooming out and in
         $(document).on('zoomhaus.goto', function(evt, index){
@@ -111,37 +121,48 @@ bootstrap
 
         })
 
+        $(document).on('zoomhaus.next', function(evt){
+            var index = $('.zoomhaus-target.active').index( '.zoomhaus-target' )
+            index += 1
+            if( index >= $('.zoomhaus-target').length ){
+                index = 0
+            }
+            jQuery(document).trigger('zoomhaus.goto', [ index ])
+        });
+
+        $(document).on('zoomhaus.previous', function(evt){
+            var index = $('.zoomhaus-target.active').index( '.zoomhaus-target' )
+            index -= 1
+            if( index < 0 ){
+                index = $('.zoomhaus-target').length - 1
+            }
+            jQuery(document).trigger('zoomhaus.goto', [ index ])
+        });
+
+        $(document).on('zoomhaus.close', function(evt){
+            closeOverlay( $, settings );
+        });
+
         // Set up arrow key nav if desired
         if( jQuery('body').data('zoomhaus.arrow-nav') === undefined ){
 
             jQuery(document).keydown(function(evt){
-                var index = $('.zoomhaus-target.active').index( '.zoomhaus-target' )
 
                 switch( evt.which ){
                     case 37 : // left
-                        index -= 1
-                        if( index < 0 ){
-                            index = $('.zoomhaus-target').length - 1
-                        }
+                        $(document).trigger('zoomhaus.previous')
                         break
 
                     case 39 : // right
-                        index += 1
-                        if( index >= $('.zoomhaus-target').length ){
-                            index = 0
-                        }
+                        $(document).trigger('zoomhaus.next')
                         break
 
                     default: return
                 }
-
-                jQuery(document).trigger('zoomhaus.goto', [ index ])
             })
 
             jQuery('body').data('zoomhaus.arrow-nav', true)
         }
-
-
 
         // return $elems
         return this

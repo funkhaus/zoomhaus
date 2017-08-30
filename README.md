@@ -19,6 +19,18 @@ That's it!
 
 Can we use arrow keys to navigate through all zoomhaus images?
 
+### `clickToExit`
+
+***Boolean. Default `true`***
+
+Will a click anywhere on the open overlay trigger its closing?
+
+### `closeOnScroll`
+
+***Boolean. Default `true`***
+
+Will scrolling while the overlay is open close that overlay?
+
 ### `esc`
 
 ***Boolean. Default `true`***
@@ -49,6 +61,26 @@ Minimum vertical margin of a zoomed-in image, in pixels.
 
 Selector to use for a template element in the zoomed-in overlay. Moves the template element to the `#zoomhaus-overlay .template-slot` element. Useful for adding arrow keys to the overlay, for example.
 
+## Events
+
+`jQuery(document).trigger('event-name-here')`
+
+### `zoomhaus.close`
+
+Closes the open Zoomhaus overlay.
+
+### `zoomhaus.goto`
+
+Goes to the nth `zoomhaus-target`. `jQuery(document).trigger('zoomhaus.goto', [ yourIndexHere ])`
+
+### `zoomhaus.next`
+
+Goes to the next `zoomhaus-target` in the overlay.
+
+### `zoomhaus.prev`
+
+Goes to the previous `zoomhaus-target` in the overlay.
+
 ## Development
 1. Clone or fork this repo.
 1. `npm install`
@@ -57,9 +89,10 @@ Selector to use for a template element in the zoomed-in overlay. Moves the templ
 
 -------
 
-Version 2.0.2
+Version 2.0.3
 
 http://funkhaus.us
 
+* 2.0.3 - Added `clickToExit`, `closeOnScroll`, more robust events and documentation
 * 2.0.2 - Added `template`
 * 2.0.1 - Added `marginX` and `marginY`, fixed a vertical sizing bug
