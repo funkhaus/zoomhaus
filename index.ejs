@@ -32,6 +32,14 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
+        #overlay-content {
+            display: flex;
+            justify-content: center;
+            margin-top: 150px;
+        }
+        #overlay-content button {
+            font-size: 20px;
+        }
 
     </style>
 </head>
@@ -53,6 +61,7 @@
     <div id="overlay-content">
         <button class="prev">Previous Image</button>
         <button class="next">Next Image</button>
+        <br/><button class="close">Close</button>
     </div>
 
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -63,6 +72,12 @@
     $('img').zoomhaus({
         template: '#overlay-content',
         clickToExit: false
+        // Sample implementation of `goto` callback:
+        // goto: function(e, i, $outgoing, $incoming, toNext){
+        //     console.log(e, i, toNext);
+        //     console.log($outgoing);
+        //     console.log($incoming);
+        // }
     });
 
     $('body').on('click', 'button.next', function(){
@@ -71,6 +86,10 @@
 
     $('body').on('click', 'button.prev', function(){
         $(document).trigger('zoomhaus.previous');
+    });
+
+    $('body').on('click', 'button.close', function(){
+        $(document).trigger('zoomhaus.close');
     });
 
 </script>

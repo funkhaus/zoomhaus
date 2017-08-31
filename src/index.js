@@ -21,7 +21,8 @@ bootstrap
             marginY: 50,
             template: false,            // Selector for <template> to place inside the overlay
             clickToExit: true,          // Does a click anywhere close the overlay when it's open?
-            closeOnScroll: true         // Does a scroll close the open overlay?
+            closeOnScroll: true,        // Does a scroll close the open overlay?
+            goto: false                 // Callback for zoomhaus.goto event
         }, options)
 
         // Setup window dimension shortcuts and onResize listeners
@@ -102,23 +103,36 @@ bootstrap
             if( ! $('.zoomhaus-target.active').length || $('.zoomhaus-target').length <= 1 ) return
 
             // Save outgoing and incoming targets
-            var $outgoing = $('.zoomhaus-target.active')
-            var $incoming = $('.zoomhaus-target').eq(index)
-
-            // Set displayed image src and srcset to target
-            $('.zoomhaus-image').attr( 'src', $incoming.attr('src') )
-            $('.zoomhaus-image').attr( 'srcset', $incoming.attr('srcset') )
-
-            // Center the image
-            const width = Math.min( win.width - 100, $incoming.attr('width') );
-            $('.zoomhaus-image').css('width', width)
+            const $outgoingImage = $('.zoomhaus-target.active')
+            const $incomingImage = $('.zoomhaus-target').eq(index)
 
             // Set appropriate classes
-            $outgoing.removeClass('active')
-            $incoming.addClass('active')
+            $outgoingImage.removeClass('active')
+            $incomingImage.addClass('active')
 
-            evt.preventDefault()
+            if( settings.goto ){
 
+                const outgoingIndex = $('.zoomhaus-target').index($outgoingImage)
+                const lastIndex = $('.zoomhaus-target').length - 1
+
+                let toNext = index > outgoingIndex || (outgoingIndex === lastIndex && index === 0)
+                if( outgoingIndex === 0 && index === lastIndex ) toNext = false
+
+                settings.goto(evt, index, $outgoingImage, $incomingImage, toNext)
+
+            } else {
+                // Built-in transition - replaces current image with desired one
+
+                // Set displayed image src and srcset to target
+                $('.zoomhaus-image').attr( 'src', $incoming.attr('src') )
+                $('.zoomhaus-image').attr( 'srcset', $incoming.attr('srcset') )
+
+                // Center the image
+                const width = Math.min( win.width - 100, $incoming.attr('width') );
+                $('.zoomhaus-image').css('width', width)
+
+                evt.preventDefault()
+            }
         })
 
         $(document).on('zoomhaus.next', function(evt){

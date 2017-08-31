@@ -37,6 +37,12 @@ Will scrolling while the overlay is open close that overlay?
 
 Can we use the 'esc' key to close the zoomhaus gallery?
 
+### `goto( evt, index, $outgoing, $incoming, next )`
+
+***Function. Default `false`***
+
+Override the default `zoomhaus.goto` callback with your own. Accepts four arguments: the event, the desired index, the outgoing image, the incoming image, and a bool set to `true` if going to the next slide and `false` if not.
+
 ### `grow`
 
 ***Boolean. Default `true`***
@@ -89,10 +95,11 @@ Goes to the previous `zoomhaus-target` in the overlay.
 
 -------
 
-Version 2.0.3
+Version 2.0.4
 
 http://funkhaus.us
 
+* 2.0.4 - Added `goto`
 * 2.0.3 - Added `clickToExit`, `closeOnScroll`, more robust events and documentation
 * 2.0.2 - Added `template`
 * 2.0.1 - Added `marginX` and `marginY`, fixed a vertical sizing bug
