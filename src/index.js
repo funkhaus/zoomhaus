@@ -5,7 +5,6 @@ import closeOverlay from './closeOverlay'
 import openOverlay from './openOverlay'
 
 // bootstraps transitions - bootstrap() throws an error for some reason
-bootstrap
 
 (function($){
 
@@ -103,32 +102,32 @@ bootstrap
             if( ! $('.zoomhaus-target.active').length || $('.zoomhaus-target').length <= 1 ) return
 
             // Save outgoing and incoming targets
-            const $outgoingImage = $('.zoomhaus-target.active')
-            const $incomingImage = $('.zoomhaus-target').eq(index)
+            const $outgoingReference = $('.zoomhaus-target.active')
+            const $incomingReference = $('.zoomhaus-target').eq(index)
 
             // Set appropriate classes
-            $outgoingImage.removeClass('active')
-            $incomingImage.addClass('active')
+            $outgoingReference.removeClass('active')
+            $incomingReference.addClass('active')
 
             if( settings.goto ){
 
-                const outgoingIndex = $('.zoomhaus-target').index($outgoingImage)
+                const outgoingIndex = $('.zoomhaus-target').index($outgoingReference)
                 const lastIndex = $('.zoomhaus-target').length - 1
 
                 let toNext = index > outgoingIndex || (outgoingIndex === lastIndex && index === 0)
                 if( outgoingIndex === 0 && index === lastIndex ) toNext = false
 
-                settings.goto(evt, index, $outgoingImage, $incomingImage, toNext)
+                settings.goto(evt, index, $outgoingReference, $incomingReference, toNext)
 
             } else {
                 // Built-in transition - replaces current image with desired one
 
                 // Set displayed image src and srcset to target
-                $('.zoomhaus-image').attr( 'src', $incoming.attr('src') )
-                $('.zoomhaus-image').attr( 'srcset', $incoming.attr('srcset') )
+                $('.zoomhaus-image').attr( 'src', $incomingReference.attr('src') )
+                $('.zoomhaus-image').attr( 'srcset', $incomingReference.attr('srcset') )
 
                 // Center the image
-                const width = Math.min( win.width - 100, $incoming.attr('width') );
+                const width = Math.min( win.width - 100, $incomingReference.attr('width') );
                 $('.zoomhaus-image').css('width', width)
 
                 evt.preventDefault()

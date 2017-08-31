@@ -16,8 +16,8 @@
     -webkit-clip-path: inset(0 0);
     clip-path: inset(0 0);
 
-    -webkit-transition: -webkit-transform 0.6s ease, -webkit-clip-path 0.6s ease, left 0.6s ease, top 0.6s ease, width 0.6s ease, height 0.6s ease;
-    transition: transform 0.6s ease, clip-path 0.6s ease, left 0.6s ease, top 0.6s ease, width 0.6s ease, height 0.6s ease;
+    -webkit-transition: -webkit-transform 0.6s ease, -webkit-clip-path 0.6s ease, width 0.6s ease, height 0.6s ease;
+    transition: transform 0.6s ease, clip-path 0.6s ease, width 0.6s ease, height 0.6s ease;
 }
 .zoomhaus-open #zoomhaus-overlay {
     background: rgba(255, 255, 255, 1);
@@ -30,12 +30,20 @@
 .zoomhaus-open .header-screen,
 #zoomhaus-overlay .template-slot {
     opacity: 0;
+
+    will-change: opacity;
+
+    transition: opacity 0.4s;
 }
 .zoomhaus-open #zoomhaus-overlay .template-slot {
     opacity: 1;
 }
-.zoomhaus-transitioning #zoomhaus-overlay .template-slot {
-    will-change: opacity;
+#zoomhaus-overlay .zoomhaus-center {
+    will-change: transform, clip-path;
 
-    transition: opacity 0.4s;
+    -webkit-transform: translate(calc(50vw - 50%), calc(50vh - 50%)) !important;
+    transform: translate(calc(50vw - 50%), calc(50vh - 50%)) !important;
+
+    -webkit-clip-path: inset(0 0) !important;
+    clip-path: inset(0 0) !important;
 }

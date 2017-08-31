@@ -9,11 +9,10 @@ export default ( target, settings, $, winDimensions ) => {
     var imgRect = $target.get(0).getBoundingClientRect()
 
     let css = {
-        transform: 'none',
+        'webkit-transform': `translate(${imgRect.left}px, ${imgRect.top}px)`,
+        transform: `translate(${imgRect.left}px, ${imgRect.top}px)`,
         position: 'absolute',
         width: imgRect.width,
-        left: imgRect.left,
-        top: imgRect.top,
         height: 'auto'
     }
 
@@ -32,6 +31,8 @@ export default ( target, settings, $, winDimensions ) => {
     const $newImg = $(target).clone()
         .css( css )
         .removeClass('active zoomhaus-target')
+
+
 
     // add image into overlay
     $('#zoomhaus-overlay').show()
@@ -60,32 +61,10 @@ export default ( target, settings, $, winDimensions ) => {
     var scale = targetWidth / imgRect.width;
     var antiScale = imgRect.width / targetWidth;
 
-    // wait for animation frame so the browser can handle transitions
-    window.requestAnimationFrame(function(){
-
-        // add body classes
-        $('body').addClass('zoomhaus-open zoomhaus-transitioning')
-
-        // when transition complete...
-        $newImg.one($.support.transition.end, function(){
-
-            // remove transition class
-            $('body').removeClass('zoomhaus-transitioning')
-
-        })
-        .emulateTransitionEnd(600)
-
-        // add transform styling
-        $newImg.css({
-            '-webkit-clip-path': 'inset(0)',
-            'clip-path': 'inset(0)',
-            'top': '50%',
-            'left': '50%',
-            'width': targetWidth,
-            '-webkit-transform': '-webkit-translate(-50%, -50%)',
-            'transform': 'translate(-50%, -50%)'
-        })
-
+    // add body classes
+    $('body').addClass('zoomhaus-open')
+    $newImg.addClass('zoomhaus-center').css({
+        width: targetWidth
     })
 
 }

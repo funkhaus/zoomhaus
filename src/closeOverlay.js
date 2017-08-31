@@ -1,18 +1,16 @@
 export default ( $, settings ) => {
 
     // remove body class
-    $('body').removeClass('zoomhaus-open').addClass('zoomhaus-transitioning')
+    $('body').removeClass('zoomhaus-open')
 
     // get rectangle for image as it sits in the page
     const imgRect = $('.zoomhaus-target.active').get(0).getBoundingClientRect()
     const $target = $('.zoomhaus-target.active')
 
     let css = {
-        'left': imgRect.left,
-        'top': imgRect.top,
         'width': imgRect.width,
-        '-webkit-transform': 'none',
-        'transform': 'none'
+        'webkit-transform': `translate(${imgRect.left}px, ${imgRect.top}px)`,
+        transform: `translate(${imgRect.left}px, ${imgRect.top}px)`
     }
 
     // shrink clip-path area to match aspect ratio of parent
@@ -29,40 +27,16 @@ export default ( $, settings ) => {
 
     }
 
-    let updatingRect = true
-
-    // update ending position to prevent ugly snapping on scroll
-    const updateRect = function(){
-        // get rectangle for active image
-        const $active = $('.zoomhaus-target.active')
-
-        if( $active && $active.length ){
-            const rect = $active.get(0).getBoundingClientRect()
-
-            // set top property on overlay image
-            $('#zoomhaus-overlay img').eq(0).css({
-                top: rect.top
-            })
-        }
-
-        if( updatingRect ){
-            requestAnimationFrame(updateRect)
-        }
-    }
-    requestAnimationFrame(updateRect)
-
-    // remove transform styles, fire callback
     $('#zoomhaus-overlay img').css(css)
-    .one($.support.transition.end, function(){
 
+    setTimeout(function(){
+        $('#zoomhaus-overlay .image-slot').empty();
         $('#zoomhaus-overlay').hide()
         $('#zoomhaus-overlay .image-slot').empty()
         $('.zoomhaus-target.active').removeClass('active')
         $('body').removeClass('zoomhaus-transitioning')
 
-        updatingRect = false
-
-    })
-    .emulateTransitionEnd(600);
+    }, 600);
+    $('#zoomhaus-overlay img').removeClass('zoomhaus-center');
 
 }
