@@ -95,10 +95,11 @@ Goes to the previous `zoomhaus-target` in the overlay.
 
 -------
 
-Version 2.1.0
+Version 2.1.1
 
 http://funkhaus.us
 
+* 2.1.1 - Fixed a click-to-close bug
 * 2.1.0 - Trimmed down lots of extra code, made class declarations central
 * 2.0.4 - Added `goto`
 * 2.0.3 - Added `clickToExit`, `closeOnScroll`, more robust events and documentation

@@ -1,10 +1,7 @@
-import bootstrap from './bootstrap'
 import setupWindow from './setupWindow'
 import styles from './styles'
 import closeOverlay from './closeOverlay'
 import openOverlay from './openOverlay'
-
-// bootstraps transitions - bootstrap() throws an error for some reason
 
 (function($){
 
@@ -42,8 +39,10 @@ import openOverlay from './openOverlay'
 
         // close overlay when clicking anything
         if( settings.clickToExit ){
-            $(document).on('click', '.zoomhaus-open', function(){
-                $(document).trigger('zoomhaus.close')
+            $(document).on('click', '#zoomhaus-overlay', function(){
+                if( jQuery('body').hasClass('zoomhaus-open') ){
+                    $(document).trigger('zoomhaus.close')
+                }
             })
         }
 
