@@ -83,7 +83,7 @@ Goes to the nth `zoomhaus-target`. `jQuery(document).trigger('zoomhaus.goto', [ 
 
 Goes to the next `zoomhaus-target` in the overlay.
 
-### `zoomhaus.prev`
+### `zoomhaus.previous`
 
 Goes to the previous `zoomhaus-target` in the overlay.
 
