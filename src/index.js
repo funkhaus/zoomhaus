@@ -7,6 +7,8 @@ import openOverlay from './openOverlay'
 
     $.fn.zoomhaus = function(options, cb) {
 
+        let cache = {}
+
         // Defaults
         const settings = $.extend({
             container: window,
@@ -57,13 +59,32 @@ import openOverlay from './openOverlay'
 
 
         // now loop through elements and set a listener
-        this.each(function(){
+        this.each(function(index){
+
+            const el = $(this).get(0)
 
             // abort if this is not an image
-            if ( ! $(this).is('img') ) return
+            if ( ! $(this).is('img') && !el.hasAttribute('width') && !el.hasAttribute('height') ) return
 
             // add class
             $(this).addClass('zoomhaus-target')
+
+            // cache source
+            const cacheId = `zhCache${index}`
+            $(this).data('zoomhaus-cache-id', cacheId)
+            if( $(this).is('img') ){
+                const img = new Image($(this).attr('width'), $(this).attr('height'))
+                img.src = $(this).attr('src')
+                cache[cacheId] = img
+            } else if( $(this).is('video') ){
+                const src = $(this).find('source').attr('src')
+                console.log(src)
+
+                const videoRequest = fetch('').then(response => response.blob());
+                videoRequest.then(blob => {
+                    cache[cacheId] = window.URL.createObjectURL(blob)
+                });
+            }
 
             // wait for click
             $(this).click(function(e){
@@ -72,7 +93,7 @@ import openOverlay from './openOverlay'
                 if ( $('body.zoomhaus-open').length || $('body.zoomhaus-transitioning').length ) return
 
                 // open overlay for this image
-                openOverlay( this, settings, $, win )
+                openOverlay( this, settings, $, win, cache )
 
             })
         })

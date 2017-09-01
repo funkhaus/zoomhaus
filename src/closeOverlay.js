@@ -27,7 +27,7 @@ export default ( $, settings ) => {
 
     }
 
-    $('#zoomhaus-overlay img').css(css)
+    $('#zoomhaus-overlay .image-slot > *:last-child').css(css)
 
     setTimeout(function(){
         $('#zoomhaus-overlay .image-slot').empty();
@@ -37,6 +37,6 @@ export default ( $, settings ) => {
         $('body').removeClass('zoomhaus-transitioning')
 
     }, 600);
-    $('#zoomhaus-overlay img').removeClass('zoomhaus-center');
+    $('#zoomhaus-overlay .image-slot > *:last-child').removeClass('zoomhaus-center');
 
 }

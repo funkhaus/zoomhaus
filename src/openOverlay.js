@@ -1,4 +1,4 @@
-export default ( target, settings, $, winDimensions ) => {
+export default ( target, settings, $, winDimensions, cache ) => {
 
     const $target = $(target)
 
@@ -31,6 +31,18 @@ export default ( target, settings, $, winDimensions ) => {
     const $newImg = $(target).clone()
         .css( css )
         .removeClass('active zoomhaus-target')
+
+    if( $newImg.is('video') ){
+        // const cachedBlob = cache[$target.data('zoomhaus-cache-id')]
+        // console.log(cachedBlob)
+        // const srcUrl = window.URL.createObjectURL(cachedBlob)
+        $newImg.attr('src', $(target).find('source').attr('src'));//cache[$target.data('zoomhaus-cache-id')])
+    }
+
+    const currentTime = $(target).get(0).currentTime
+    if( currentTime !== undefined ){
+        $newImg.get(0).currentTime = currentTime
+    }
 
 
 
