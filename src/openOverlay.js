@@ -2,6 +2,11 @@ import { setDefault, q, qa, createAndAppend } from './utils'
 
 export default ( target, settings, winDimensions ) => {
 
+    // abort if there is already an instance open or if we're animating
+    if ( document.body.classList.contains('zoomhaus-open')
+        || document.body.classList.contains('zoomhaus-transitioning') )
+        return
+
     // add active class to target
     target.classList.add('active')
 
@@ -31,8 +36,8 @@ export default ( target, settings, winDimensions ) => {
     newImg.classList.remove('active')
     newImg.classList.remove('zoomhaus-target')
 
-    for( let [key, value] of Object.entries(css) ){
-        newImg.style[key] = value
+    for( let prop in css ){
+        newImg.style[prop] = css[prop]
     }
 
     // add image to overlay
@@ -69,7 +74,6 @@ export default ( target, settings, winDimensions ) => {
     document.body.classList.add('zoomhaus-open')
     // wait a few ms to add image classes so that animation applies
     setTimeout(() => {
-        console.log(targetWidth)
         newImg.style.width = `${ targetWidth }px`
         newImg.classList.add('zoomhaus-center')
         newImg.classList.add('zoomhaus-image')

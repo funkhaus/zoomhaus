@@ -44,6 +44,13 @@ class Zoomhaus {
             // append overlay to body
             createAndAppend(str, document.body)
 
+            // add scroll exit if desired
+            if( this.opts.closeOnScroll ){
+                window.addEventListener('mousewheel', evt => {
+                    this.close(evt)
+                })
+            }
+
         }
 
         // Save a list of matched elements
@@ -63,11 +70,6 @@ class Zoomhaus {
             // wait for click
             el.addEventListener('click', evt => {
 
-                // abort if there is already an instance open or if we're animating
-                if ( document.body.classList.contains('zoomhaus-open')
-                    || document.body.classList.contains('zoomhaus-transitioning') )
-                    return
-
                 // open overlay for this image
                 openOverlay( el, this.opts, window )
 
@@ -84,8 +86,8 @@ class Zoomhaus {
 
     }
 
-    close(){
-        closeOverlay( this.opts )
+    close(evt){
+        closeOverlay( this.opts, evt )
     }
 }
 
