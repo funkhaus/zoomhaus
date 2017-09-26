@@ -70,15 +70,18 @@
 
 <script>
 
-    $('img').zoomhaus({
-        template: '#overlay-content',
-        //clickToExit: false
-        // Sample implementation of `goto` callback:
-        // goto: function(e, i, $outgoing, $incoming, toNext){
-        //     console.log(e, i, toNext);
-        //     console.log($outgoing);
-        //     console.log($incoming);
-        // }
+    // $('img').zoomhaus({
+    //     template: '#overlay-content',
+    //     clickToExit: false
+    //     // Sample implementation of `goto` callback:
+    //     // goto: function(e, i, $outgoing, $incoming, toNext){
+    //     //     console.log(e, i, toNext);
+    //     //     console.log($outgoing);
+    //     //     console.log($incoming);
+    //     // }
+    // });
+    new Zoomhaus('img', {
+        template: '#overlay-content'
     });
 
     $('body').on('click', 'button.next', function(){
