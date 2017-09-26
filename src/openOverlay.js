@@ -7,28 +7,32 @@ export default ( target, settings, winDimensions ) => {
 
     // get rectangle for image as it sits in the page
     var imgRect = target.getBoundingClientRect()
-    let clipPath = false
+
+    // build styling
+    let css = {
+        '-webkit-transform': `-webkit-translate(${imgRect.left}px, ${imgRect.top}px)`,
+        transform: `translate(${imgRect.left}px, ${imgRect.top}px)`,
+        position: 'absolute',
+        width: `${imgRect.width}px`,
+        height: 'auto',
+    }
 
     // determine if we need any clipping
     if( settings.grow ){
-
-        // Calculate the aspect ratio of the parent
+        // Calculate the height difference between this and parent container
         var parentHeight = target.parentNode.getBoundingClientRect().height;
         var diff = target.getBoundingClientRect().height - parentHeight;
-        clipPath = 'inset(' + (diff / 2) + 'px 0)';
-
+        css['-webkit-clip-path'] = '-webkit-inset(' + (diff / 2) + 'px 0)';
+        css['clip-path'] = 'inset(' + (diff / 2) + 'px 0)';
     }
 
     // clone target image, position it
     const newImg = target.cloneNode()
     newImg.classList.remove('active')
     newImg.classList.remove('zoomhaus-target')
-    newImg.style.transform = `translate(${imgRect.left}px, ${imgRect.top}px)`
-    newImg.style.position = 'absolute'
-    newImg.style.width = `${imgRect.width}px`
-    newImg.style.height = 'auto'
-    if( clipPath ){
-        newImg.style.clipPath = clipPath
+
+    for( let [key, value] of Object.entries(css) ){
+        newImg.style[key] = value
     }
 
     // add image to overlay
@@ -58,16 +62,18 @@ export default ( target, settings, winDimensions ) => {
     }
 
     // calculate transform properties
-    // const scale = targetWidth / width;
-    // const antiScale = width / targetWidth;
+    const scale = targetWidth / width;
+    const antiScale = width / targetWidth;
 
     // add body classes
     document.body.classList.add('zoomhaus-open')
+    // wait a few ms to add image classes so that animation applies
     setTimeout(() => {
+        console.log(targetWidth)
+        newImg.style.width = `${ targetWidth }px`
         newImg.classList.add('zoomhaus-center')
         newImg.classList.add('zoomhaus-image')
-        newImg.style.width = `${ targetWidth }px`
-    }, 10)
+    }, 25)
 
 
 }

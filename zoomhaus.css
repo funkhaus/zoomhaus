@@ -13,10 +13,6 @@
     -webkit-transition: background 0.6s ease;
     transition: background 0.6s ease;
 }
-#zoomhaus-overlay .image-slot > * {
-    -webkit-transform-origin: left top;
-    transform-origin: left top;
-}
 .zoomhaus-target {
     cursor: pointer;
 }
@@ -24,13 +20,13 @@
     visibility: hidden;
 }
 .zoomhaus-image {
-    will-change: clip-path, transform;
+    will-change: clip-path, transform, width, height;
 
     -webkit-clip-path: inset(0 0);
     clip-path: inset(0 0);
 
-    -webkit-transition: -webkit-transform 0.6s ease, -webkit-clip-path 0.6s ease, width 0.6s ease, height 0.6s ease;
-    transition: transform 0.6s ease, clip-path 0.6s ease, width 0.6s ease, height 0.6s ease;
+    -webkit-transition: width 0.6s ease, height 0.6s ease, -webkit-transform 0.6s ease, -webkit-clip-path 0.6s ease;
+    transition: width 0.6s ease, height 0.6s ease, transform 0.6s ease, clip-path 0.6s ease;
 }
 .zoomhaus-open #zoomhaus-overlay {
     background: rgba(255, 255, 255, 1);
@@ -52,7 +48,7 @@
     opacity: 1;
 }
 #zoomhaus-overlay .zoomhaus-center {
-    will-change: transform, clip-path;
+    will-change: transform, clip-path, width, height;
 
     -webkit-transform: translate(calc(50vw - 50%), calc(50vh - 50%)) !important;
     transform: translate(calc(50vw - 50%), calc(50vh - 50%)) !important;

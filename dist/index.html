@@ -32,6 +32,12 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
+        #zoomhaus-overlay {
+            transition: opacity 0.4s;
+        }
+        #zoomhaus-overlay:not(.displayed) {
+            opacity: 0;
+        }
         #overlay-content {
             display: flex;
             justify-content: center;

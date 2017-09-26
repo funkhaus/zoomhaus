@@ -17,7 +17,8 @@ class Zoomhaus {
             template: setDefault(options, 'template', false),            // Selector for <template> to place inside the overlay
             clickToExit: setDefault(options, 'clickToExit', true),       // Does a click anywhere close the overlay when it's open?
             closeOnScroll: setDefault(options, 'closeOnScroll', true),   // Does a scroll close the open overlay?
-            goto: setDefault(options, 'goto', false)                     // Callback for zoomhaus.goto event
+            goto: setDefault(options, 'goto', false),                    // Callback for zoomhaus.goto event
+            close: setDefault(options, 'close', false)                   // Selectors that close the overlay when clicked
         }
 
         // add the main overlay if it does not exist
@@ -38,14 +39,20 @@ class Zoomhaus {
                     <div class="image-slot"></div>
                     <div class="template-slot">${ template }</div>
                 </div>
-            `
+            `.trim()
 
             // append overlay to body
             createAndAppend(str, document.body)
 
         }
 
+        // Save a list of matched elements
+        this.elements = []
+
+        // Iterate over desired objects
         qa(selector).forEach( el => {
+
+            this.elements.push(el)
 
             // // abort if this is not an image
             // if ( ! $(this).is('img') ) return
@@ -67,6 +74,18 @@ class Zoomhaus {
             })
         })
 
+        if( this.opts.close ){
+            qa(this.opts.close).forEach(el => {
+                el.addEventListener('click', evt => {
+                    this.close()
+                })
+            })
+        }
+
+    }
+
+    close(){
+        closeOverlay( this.opts )
     }
 }
 
