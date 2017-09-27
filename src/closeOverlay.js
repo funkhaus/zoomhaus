@@ -1,13 +1,18 @@
 import { setDefault, q, qa, createAndAppend } from './utils'
 
+let scrollOffset = 0,
+    target = false,
+    lastScrollY = 0
+
 function matchScroll(evt){
+    const latestScrollY = window.pageYOffset || document.body.scrollTop
     const overlay = document.getElementById('zoomhaus-overlay')
-    const currentOffset = parseInt(overlay.style.top.replace('px', '')) || 0
-    console.log(evt)
-    overlay.style.top = currentOffset - evt.movementY + 'px'
+    scrollOffset += lastScrollY - latestScrollY
+    lastScrollY = latestScrollY
+    overlay.style.top = scrollOffset + 'px'
 }
 
-export default ( settings, wheelEvent ) => {
+export default ( settings ) => {
 
     // abort if we're already closed or if we're animating
     if ( ! document.body.classList.contains('zoomhaus-open')
@@ -16,11 +21,13 @@ export default ( settings, wheelEvent ) => {
 
     // get rectangle for image as it sits in the page
     const imgRect = q('.zoomhaus-target.active').getBoundingClientRect()
-    const target = q('.zoomhaus-target.active')
+    target = q('.zoomhaus-target.active')
 
     // start matching scroll
-    document.getElementById('zoomhaus-overlay').style.top = `${ -wheelEvent.deltaY }px`
-    window.addEventListener('mousewheel', matchScroll)
+    scrollOffset = 0
+    lastScrollY = window.pageYOffset || document.body.scrollTop
+    document.getElementById('zoomhaus-overlay').style.top = `${ scrollOffset }px`
+    window.addEventListener('scroll', matchScroll)
 
     // remove body class
     document.body.classList.remove('zoomhaus-open')
@@ -55,8 +62,8 @@ export default ( settings, wheelEvent ) => {
         q('.zoomhaus-target.active').classList.remove('active')
         document.body.classList.remove('zoomhaus-transitioning')
 
-        // start matching scroll
-        window.removeEventListener('mousewheel', matchScroll)
+        // stop matching scroll
+        window.removeEventListener('scroll', matchScroll)
         document.getElementById('zoomhaus-overlay').style.top = 0
 
     }, 600);
