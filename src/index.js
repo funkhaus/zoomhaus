@@ -1,4 +1,3 @@
-// import setupWindow from './setupWindow'
 import closeOverlay from './closeOverlay'
 import openOverlay from './openOverlay'
 import { setDefault, q, qa, createAndAppend } from './utils'
@@ -8,7 +7,6 @@ class Zoomhaus {
         options = options || {}
 
         this.opts = {
-            container: options.container || window,
             grow: setDefault(options, 'grow', true),                     // Will the image need to grow and shrink when moving to and from its container?
             arrows: setDefault(options, 'arrows', true),                 // Can we page through images with left/right arrow keys?
             esc: setDefault(options, 'esc', true),                       // Can we use 'esc' to close an open gallery?,
@@ -34,12 +32,7 @@ class Zoomhaus {
             }
 
             // construct overlay HTML
-            const str = `
-                <div id="zoomhaus-overlay">
-                    <div class="image-slot"></div>
-                    <div class="template-slot">${ template }</div>
-                </div>
-            `.trim()
+            const str = '<div id="zoomhaus-overlay"><div class="image-slot"></div><div class="template-slot">' + template + '</div></div>'
 
             // append overlay to body
             createAndAppend(str, document.body)
@@ -127,7 +120,9 @@ class Zoomhaus {
         if( ! q('.zoomhaus-target.active') || qa('.zoomhaus-target').length <= 1 ) return
 
         // keep index within bounds
-        index = Math.max(0, Math.min(this.elements.length - 1, index))
+        while( index < 0 || index >= this.elements.length ){
+            index += index < 0 ? this.elements.length : -this.elements.length
+        }
 
         // save references
         const outgoing = q('.zoomhaus-target.active')
