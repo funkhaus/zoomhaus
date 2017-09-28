@@ -58,6 +58,12 @@ z.methodName()
 * `next()` - Go to the next Zoomhaus target. Loops automatically.
 * `previous()` - Go to the previous Zoomhaus target. Loops automatically.
 
+## Properties
+
+* `elements` - Elements that this Zoomhaus instance watches.
+* `index` - Index of current or last active zoomed-in element.
+* `opts` - Options for Zoomhaus instance.
+
 ## Development
 1. Clone or fork this repo.
 1. `npm install`

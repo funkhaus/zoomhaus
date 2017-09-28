@@ -112,8 +112,8 @@ class Zoomhaus {
         }
     }
 
-    close(evt){
-        closeOverlay( this.opts, evt )
+    close(){
+        closeOverlay( this.opts )
     }
 
     goto(index){
