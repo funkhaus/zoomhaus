@@ -17,11 +17,11 @@ class Zoomhaus {
             template: setDefault(options, 'template', false),            // Selector for <template> to place inside the overlay
             clickToExit: setDefault(options, 'clickToExit', true),       // Does a click anywhere close the overlay when it's open?
             closeOnScroll: setDefault(options, 'closeOnScroll', true),   // Does a scroll close the open overlay?
-            goto: setDefault(options, 'goto', false),                    // Callback for zoomhaus.goto event
+            onGoTo: setDefault(options, 'goto', false),                  // Callback for zoomhaus.goto event. Accepts 3 params: Zoomhaus instance, outgoing element, and incoming element.
             close: setDefault(options, 'close', false)                   // Selectors that close the overlay when clicked
         }
 
-        // add the main overlay if it does not exist
+        // add the main overlay if it doesn't exist
         if ( ! q('body > #zoomhaus-overlay') ){
 
             // look for the template if we have one
@@ -50,13 +50,14 @@ class Zoomhaus {
                     this.close(evt)
                 })
             }
-
         }
 
-        // Save a list of matched elements
+        // prep a list of matched elements
         this.elements = []
+        // save our current index
+        this.index = -1
 
-        // Iterate over desired objects
+        // iterate over desired objects
         qa(selector).forEach( el => {
 
             this.elements.push(el)
@@ -69,13 +70,20 @@ class Zoomhaus {
 
             // wait for click
             el.addEventListener('click', evt => {
-
                 // open overlay for this image
                 openOverlay( el, this.opts, window )
 
+                // save index
+                this.index = this.elements.indexOf(el)
+
+                // prevent propagation so that we don't trigger a false document.body.click event
+                if( this.opts.clickToExit ){
+                    evt.stopPropagation()
+                }
             })
         })
 
+        // add click listeners to 'close' buttons
         if( this.opts.close ){
             qa(this.opts.close).forEach(el => {
                 el.addEventListener('click', evt => {
@@ -84,145 +92,80 @@ class Zoomhaus {
             })
         }
 
+        // close on click
+        if( this.opts.clickToExit ){
+            document.body.addEventListener('click', evt => {
+                this.close()
+            })
+        }
+
+        if( this.opts.esc ){
+            document.body.addEventListener('keydown', evt => {
+                if( evt.which == 27 ){ // Esc key
+                    this.close()
+                }
+            })
+        }
+
+        if( this.opts.arrows ){
+            document.body.addEventListener('keydown', evt => {
+                if( evt.which == 37 ){ // left
+                    this.previous()
+                }
+                if( evt.which == 39 ){ // right
+                    this.next()
+                }
+            })
+        }
     }
 
     close(evt){
         closeOverlay( this.opts, evt )
     }
+
+    goto(index){
+        if( ! q('.zoomhaus-target.active') || qa('.zoomhaus-target').length <= 1 ) return
+
+        // keep index within bounds
+        index = Math.max(0, Math.min(this.elements.length - 1, index))
+
+        // save references
+        const outgoing = q('.zoomhaus-target.active')
+        const incoming = this.elements[index]
+
+        // set classes
+        outgoing.classList.remove('active')
+        incoming.classList.add('active')
+
+        // set index
+        this.index = index
+
+        // run callback
+        if( this.opts.onGoTo ){
+            this.opts.onGoTo(this, outgoing, incoming)
+        } else {
+            // Built-in transition - replaces current image with desired one
+
+            // Set displayed image src and srcset to target
+            const zhImage = q('.zoomhaus-image')
+            zhImage.setAttribute( 'src', incoming.getAttribute('src') )
+            if( incoming.hasAttribute('srcset') ){
+                zhImage.setAttribute( 'srcset', incoming.getAttribute('srcset') )
+            }
+
+            // Center the image
+            const width = Math.min( window.innerWidth - this.opts.marginX * 2, (parseInt(incoming.getAttribute('width')) || incoming.getBoundingClientRect().width) );
+            zhImage.style.width = `${ width }px`
+        }
+    }
+
+    next(){
+        this.goto(this.index + 1)
+    }
+
+    previous(){
+        this.goto(this.index - 1)
+    }
 }
 
 window.Zoomhaus = Zoomhaus
-
-/*
-
-        // Setup window dimension shortcuts and onResize listeners
-        const win = setupWindow($)
-
-
-
-        // close overlay when clicking anything
-        if( settings.clickToExit ){
-            $(document).on('click', '#zoomhaus-overlay', function(){
-                if( jQuery('body').hasClass('zoomhaus-open') ){
-                    $(document).trigger('zoomhaus.close')
-                }
-            })
-        }
-
-        if( settings.closeOnScroll ){
-            $(settings.container).scroll(function(){
-                // if overlay is open, close it
-                if ( $('body').hasClass('zoomhaus-open') ){
-                    $(document).trigger('zoomhaus.close')
-                }
-            })
-        }
-
-
-        // now loop through elements and set a listener
-
-        // Set up esc key
-        if( settings.esc && $('body').data('zoomhaus.esc') === undefined ){
-            $(document).keydown(function(evt){
-                if( evt.which == 27 && $('.zoomhaus-open').length ){
-                    $(document).trigger('zoomhaus.close')
-                }
-            })
-
-            $('body').data('zoomhaus.esc', true)
-        }
-
-        // Remove event so we don't get duplicates
-        $(document).off('zoomhaus.goto')
-        $(document).off('zoomhaus.next')
-        $(document).off('zoomhaus.previous')
-        $(document).off('zoomhaus.close')
-
-        // Change the displayed image without zooming out and in
-        $(document).on('zoomhaus.goto', function(evt, index){
-
-            // Make sure a zoomhaus image is active and we have more than one zoomhaus target
-            if( ! $('.zoomhaus-target.active').length || $('.zoomhaus-target').length <= 1 ) return
-
-            // Save outgoing and incoming targets
-            const $outgoingReference = $('.zoomhaus-target.active')
-            const $incomingReference = $('.zoomhaus-target').eq(index)
-
-            // Set appropriate classes
-            $outgoingReference.removeClass('active')
-            $incomingReference.addClass('active')
-
-            if( settings.goto ){
-
-                const outgoingIndex = $('.zoomhaus-target').index($outgoingReference)
-                const lastIndex = $('.zoomhaus-target').length - 1
-
-                let toNext = index > outgoingIndex || (outgoingIndex === lastIndex && index === 0)
-                if( outgoingIndex === 0 && index === lastIndex ) toNext = false
-
-                settings.goto(evt, index, $outgoingReference, $incomingReference, toNext)
-
-            } else {
-                // Built-in transition - replaces current image with desired one
-
-                // Set displayed image src and srcset to target
-                $('.zoomhaus-image').attr( 'src', $incomingReference.attr('src') )
-                $('.zoomhaus-image').attr( 'srcset', $incomingReference.attr('srcset') )
-
-                // Center the image
-                const width = Math.min( win.width - 100, $incomingReference.attr('width') );
-                $('.zoomhaus-image').css('width', width)
-
-                evt.preventDefault()
-            }
-        })
-
-        $(document).on('zoomhaus.next', function(evt){
-            var index = $('.zoomhaus-target.active').index( '.zoomhaus-target' )
-            index += 1
-            if( index >= $('.zoomhaus-target').length ){
-                index = 0
-            }
-            jQuery(document).trigger('zoomhaus.goto', [ index ])
-        });
-
-        $(document).on('zoomhaus.previous', function(evt){
-            var index = $('.zoomhaus-target.active').index( '.zoomhaus-target' )
-            index -= 1
-            if( index < 0 ){
-                index = $('.zoomhaus-target').length - 1
-            }
-            jQuery(document).trigger('zoomhaus.goto', [ index ])
-        });
-
-        $(document).on('zoomhaus.close', function(evt){
-            closeOverlay( $, settings );
-        });
-
-        // Set up arrow key nav if desired
-        if( jQuery('body').data('zoomhaus.arrow-nav') === undefined ){
-
-            jQuery(document).keydown(function(evt){
-
-                switch( evt.which ){
-                    case 37 : // left
-                        $(document).trigger('zoomhaus.previous')
-                        break
-
-                    case 39 : // right
-                        $(document).trigger('zoomhaus.next')
-                        break
-
-                    default: return
-                }
-            })
-
-            jQuery('body').data('zoomhaus.arrow-nav', true)
-        }
-
-        // return $elems
-        return this
-
-    }
-
-}(jQuery))*/
