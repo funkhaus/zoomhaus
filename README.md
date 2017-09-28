@@ -12,26 +12,33 @@ That's it!
 
 ```js
 new Zoomhaus('element-selector', {
-    // Will the image need to grow and shrink when moving to and from its container?
+    // Will the image be able to grow and shrink when moving to and from its container?
     grow: true,
+
     // Can we page through images with left/right arrow keys?
     arrows: true,               
-    // Can we use 'esc' to close an open gallery?
+
+    // Can we use the 'esc' key to close an open gallery?
     esc: true,
+
     // Margins for expanded image                       
     marginX: 50,
     marginY: 50,
+
     // Selector for template element - see below
-    template: false,         
+    template: false,        
+
     // Does a click anywhere close the open overlay?   
     clickToExit: true,   
+
     // Does a scroll close the open overlay?
     closeOnScroll: true,
+
     // Replacement for zoomhaus.goto method. Accepts 3 params: Zoomhaus instance, outgoing element, and incoming element.  
     onGoTo: false,      
+
     // Selectors that close the overlay when clicked            
     close: false               
-
 })
 ```
 
