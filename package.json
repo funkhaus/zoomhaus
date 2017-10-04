@@ -4,7 +4,8 @@
   "description": "Smooth takeover image zoom effect.",
   "author": "Sander Moolin, John Robson, Funkhaus",
   "license": "MIT",
-  "homepage": "https://github.com/cvgellhorn/webpack-boilerplate",
+  "homepage": "https://github.com/funkhaus/zoomhaus",
+  "main": "dist/bundle.js",
   "scripts": {
     "dev": "NODE_ENV=dev webpack-dev-server --progress --config webpack.config.dev.js --open",
     "build": "webpack -p --progress --config webpack.config.build.js"
