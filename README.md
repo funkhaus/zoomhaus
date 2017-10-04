@@ -1,91 +1,68 @@
 ## What
-Takeover zoom effect like the images [here](http://funkhaus.us/14153/an-afternoon-with-an-la-icon-the-stahl-house/).
+Vanilla JS, zero-dependency takeover zoom effect like the images [here](http://funkhaus.us/14153/an-afternoon-with-an-la-icon-the-stahl-house/).
 
 ## How
-1. Include jQuery.
 1. Include `dist/bundle.js`.
 1. Include the contents of `./zoomhaus.css` in your own CSS.
-1. `jQuery('element').zoomhaus()` on any images you want to zoom on click.
+1. `new Zoomhaus('element-selector')` on any elements you want to zoom on click.
 
 That's it!
 
 ## Options
 
-`jQuery('element').zoomhaus({ option: value })`
+```js
+new Zoomhaus('element-selector', {
+    // Will the image be able to grow and shrink when moving to and from its container?
+    grow: true,
 
-### `arrows`
+    // Can we page through images with left/right arrow keys?
+    arrows: true,               
 
-***Boolean. Default `true`***
+    // Can we use the 'esc' key to close an open gallery?
+    esc: true,
 
-Can we use arrow keys to navigate through all zoomhaus images?
+    // Margins for expanded image                       
+    marginX: 50,
+    marginY: 50,
 
-### `clickToExit`
+    // Selector for template element - see below
+    template: false,        
 
-***Boolean. Default `true`***
+    // Does a click anywhere close the open overlay?   
+    clickToExit: true,   
 
-Will a click anywhere on the open overlay trigger its closing?
+    // Does a scroll close the open overlay?
+    closeOnScroll: true,
 
-### `closeOnScroll`
+    // Replacement for zoomhaus.goto method. Accepts 3 params: Zoomhaus instance, outgoing element, and incoming element.  
+    onGoTo: false,      
 
-***Boolean. Default `true`***
+    // Selectors that close the overlay when clicked            
+    close: false               
+})
+```
 
-Will scrolling while the overlay is open close that overlay?
+__A note on `template`__ - If `template` is set to a valid selector, Zoomhaus will grab the first element that matches that selector and place it in the image overlay. Useful for pager elements on the overlay itself, for example.
 
-### `esc`
+## Methods
 
-***Boolean. Default `true`***
+Usage:
 
-Can we use the 'esc' key to close the zoomhaus gallery?
+```js
+var z = new Zoomhaus('.element-selector')
+z.methodName()
+```
 
-### `goto( evt, index, $outgoing, $incoming, next )`
+* `close()` - Close an open overlay.
+* `goto(index)` - Go to a particular Zoomhaus target. Loops automatically.
+* `next()` - Go to the next Zoomhaus target. Loops automatically.
+* `previous()` - Go to the previous Zoomhaus target. Loops automatically.
 
-***Function. Default `false`***
+## Properties
 
-Override the default `zoomhaus.goto` callback with your own. Accepts five arguments: the event, the desired index, a reference to the old zoom target, a reference to the new zoom target, and a bool set to `true` if going to the next slide and `false` if not.
-
-### `grow`
-
-***Boolean. Default `true`***
-
-Will a cropped image grow to its full size in the zoomhaus gallery? See the `.grow-demo` div on the included demo (`npm run dev`) for an example implementation.
-
-### `marginX`
-
-***Number. Default `50`***
-
-Minimum horizontal margin of a zoomed-in image, in pixels.
-
-### `marginY`
-
-***Number. Default `50`***
-
-Minimum vertical margin of a zoomed-in image, in pixels.
-
-### `template`
-
-***String. Default `false`***
-
-Selector to use for a template element in the zoomed-in overlay. Moves the template element to the `#zoomhaus-overlay .template-slot` element. Useful for adding arrow keys to the overlay, for example.
-
-## Events
-
-`jQuery(document).trigger('event-name-here')`
-
-### `zoomhaus.close`
-
-Closes the open Zoomhaus overlay.
-
-### `zoomhaus.goto`
-
-Goes to the nth `zoomhaus-target`. `jQuery(document).trigger('zoomhaus.goto', [ yourIndexHere ])`
-
-### `zoomhaus.next`
-
-Goes to the next `zoomhaus-target` in the overlay.
-
-### `zoomhaus.previous`
-
-Goes to the previous `zoomhaus-target` in the overlay.
+* `elements` - Elements that this Zoomhaus instance watches.
+* `index` - Index of current or last active zoomed-in element.
+* `opts` - Options for Zoomhaus instance.
 
 ## Development
 1. Clone or fork this repo.
@@ -95,10 +72,11 @@ Goes to the previous `zoomhaus-target` in the overlay.
 
 -------
 
-Version 2.1.1
+Version 3.0.0
 
 http://funkhaus.us
 
+* 3.0.0 - Migrated to vanilla JS
 * 2.1.1 - Fixed a click-to-close bug
 * 2.1.0 - Trimmed down lots of extra code, made class declarations central
 * 2.0.4 - Added `goto`

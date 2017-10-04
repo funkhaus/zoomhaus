@@ -1,184 +1,166 @@
-import setupWindow from './setupWindow'
-import styles from './styles'
 import closeOverlay from './closeOverlay'
 import openOverlay from './openOverlay'
+import { setDefault, q, qa, createAndAppend } from './utils'
 
-(function($){
+class Zoomhaus {
+    constructor(selector, options, callback) {
+        options = options || {}
 
-    $.fn.zoomhaus = function(options, cb) {
+        this.opts = {
+            grow: setDefault(options, 'grow', true),                     // Will the image need to grow and shrink when moving to and from its container?
+            arrows: setDefault(options, 'arrows', true),                 // Can we page through images with left/right arrow keys?
+            esc: setDefault(options, 'esc', true),                       // Can we use 'esc' to close an open gallery?,
+            marginX: setDefault(options, 'marginX', 50),                 // Margins for expanded image
+            marginY: setDefault(options, 'marginY', 50),
+            template: setDefault(options, 'template', false),            // Selector for <template> to place inside the overlay
+            clickToExit: setDefault(options, 'clickToExit', true),       // Does a click anywhere close the overlay when it's open?
+            closeOnScroll: setDefault(options, 'closeOnScroll', true),   // Does a scroll close the open overlay?
+            onGoTo: setDefault(options, 'goto', false),                  // Callback for zoomhaus.goto event. Accepts 3 params: Zoomhaus instance, outgoing element, and incoming element.
+            close: setDefault(options, 'close', false)                   // Selectors that close the overlay when clicked
+        }
 
-        // Defaults
-        const settings = $.extend({
-            container: window,
-            grow: true,                 // Will the image need to grow and shrink when moving to and from its container?
-            arrows: true,               // Can we page through images with left/right arrow keys?
-            esc: true,                  // Can we use 'esc' to close an open gallery?,
-            marginX: 50,                // Margins for expanded image
-            marginY: 50,
-            template: false,            // Selector for <template> to place inside the overlay
-            clickToExit: true,          // Does a click anywhere close the overlay when it's open?
-            closeOnScroll: true,        // Does a scroll close the open overlay?
-            goto: false                 // Callback for zoomhaus.goto event
-        }, options)
+        // add the main overlay if it doesn't exist
+        if ( ! q('body > #zoomhaus-overlay') ){
 
-        // Setup window dimension shortcuts and onResize listeners
-        const win = setupWindow($)
+            // look for the template if we have one
+            let template = ''
+            if( this.opts.template ){
+                // copy the template
+                template = q(this.opts.template).innerHTML
+                // delete the original
+                q(this.opts.template).outerHTML = ''
+            }
 
-        // add the main overlay if it does not exist
-        if ( ! $('body > #zoomhaus-overlay').length ){
-            $('body').append('<div id="zoomhaus-overlay"><div class="image-slot"></div><div class="template-slot"></div></div>')
+            // construct overlay HTML
+            const str = '<div id="zoomhaus-overlay"><div class="image-slot"></div><div class="template-slot">' + template + '</div></div>'
 
-            // add template if we've defined one
-            if( settings.template && $(settings.template).length ){
-                $('#zoomhaus-overlay .template-slot').append( $(settings.template) )
+            // append overlay to body
+            createAndAppend(str, document.body)
+
+            // add scroll exit if desired
+            if( this.opts.closeOnScroll ){
+                window.addEventListener('mousewheel', evt => {
+                    this.close(evt)
+                })
             }
         }
 
-        // add css styling to head
-        $('head').append('<style>' + styles + '</style>')
+        // prep a list of matched elements
+        this.elements = []
+        // save our current index
+        this.index = -1
 
-        // close overlay when clicking anything
-        if( settings.clickToExit ){
-            $(document).on('click', '#zoomhaus-overlay', function(){
-                if( jQuery('body').hasClass('zoomhaus-open') ){
-                    $(document).trigger('zoomhaus.close')
-                }
-            })
-        }
+        // iterate over desired objects
+        qa(selector).forEach( el => {
 
-        if( settings.closeOnScroll ){
-            $(settings.container).scroll(function(){
-                // if overlay is open, close it
-                if ( $('body').hasClass('zoomhaus-open') ){
-                    $(document).trigger('zoomhaus.close')
-                }
-            })
-        }
+            this.elements.push(el)
 
-
-        // now loop through elements and set a listener
-        this.each(function(){
-
-            // abort if this is not an image
-            if ( ! $(this).is('img') ) return
-
-            // add class
-            $(this).addClass('zoomhaus-target')
+            // // abort if this is not an image
+            // if ( ! $(this).is('img') ) return
+            //
+            // // add class
+            el.classList.add('zoomhaus-target')
 
             // wait for click
-            $(this).click(function(e){
-
-                // abort if there is already an instance open or if we're animating
-                if ( $('body.zoomhaus-open').length || $('body.zoomhaus-transitioning').length ) return
-
+            el.addEventListener('click', evt => {
                 // open overlay for this image
-                openOverlay( this, settings, $, win )
+                openOverlay( el, this.opts, window )
 
+                // save index
+                this.index = this.elements.indexOf(el)
+
+                // prevent propagation so that we don't trigger a false document.body.click event
+                if( this.opts.clickToExit ){
+                    evt.stopPropagation()
+                }
             })
         })
 
-        // Set up esc key
-        if( settings.esc && $('body').data('zoomhaus.esc') === undefined ){
-            $(document).keydown(function(evt){
-                if( evt.which == 27 && $('.zoomhaus-open').length ){
-                    $(document).trigger('zoomhaus.close')
-                }
+        // add click listeners to 'close' buttons
+        if( this.opts.close ){
+            qa(this.opts.close).forEach(el => {
+                el.addEventListener('click', evt => {
+                    this.close()
+                })
             })
-
-            $('body').data('zoomhaus.esc', true)
         }
 
-        // Remove event so we don't get duplicates
-        $(document).off('zoomhaus.goto')
-        $(document).off('zoomhaus.next')
-        $(document).off('zoomhaus.previous')
-        $(document).off('zoomhaus.close')
-
-        // Change the displayed image without zooming out and in
-        $(document).on('zoomhaus.goto', function(evt, index){
-
-            // Make sure a zoomhaus image is active and we have more than one zoomhaus target
-            if( ! $('.zoomhaus-target.active').length || $('.zoomhaus-target').length <= 1 ) return
-
-            // Save outgoing and incoming targets
-            const $outgoingReference = $('.zoomhaus-target.active')
-            const $incomingReference = $('.zoomhaus-target').eq(index)
-
-            // Set appropriate classes
-            $outgoingReference.removeClass('active')
-            $incomingReference.addClass('active')
-
-            if( settings.goto ){
-
-                const outgoingIndex = $('.zoomhaus-target').index($outgoingReference)
-                const lastIndex = $('.zoomhaus-target').length - 1
-
-                let toNext = index > outgoingIndex || (outgoingIndex === lastIndex && index === 0)
-                if( outgoingIndex === 0 && index === lastIndex ) toNext = false
-
-                settings.goto(evt, index, $outgoingReference, $incomingReference, toNext)
-
-            } else {
-                // Built-in transition - replaces current image with desired one
-
-                // Set displayed image src and srcset to target
-                $('.zoomhaus-image').attr( 'src', $incomingReference.attr('src') )
-                $('.zoomhaus-image').attr( 'srcset', $incomingReference.attr('srcset') )
-
-                // Center the image
-                const width = Math.min( win.width - 100, $incomingReference.attr('width') );
-                $('.zoomhaus-image').css('width', width)
-
-                evt.preventDefault()
-            }
-        })
-
-        $(document).on('zoomhaus.next', function(evt){
-            var index = $('.zoomhaus-target.active').index( '.zoomhaus-target' )
-            index += 1
-            if( index >= $('.zoomhaus-target').length ){
-                index = 0
-            }
-            jQuery(document).trigger('zoomhaus.goto', [ index ])
-        });
-
-        $(document).on('zoomhaus.previous', function(evt){
-            var index = $('.zoomhaus-target.active').index( '.zoomhaus-target' )
-            index -= 1
-            if( index < 0 ){
-                index = $('.zoomhaus-target').length - 1
-            }
-            jQuery(document).trigger('zoomhaus.goto', [ index ])
-        });
-
-        $(document).on('zoomhaus.close', function(evt){
-            closeOverlay( $, settings );
-        });
-
-        // Set up arrow key nav if desired
-        if( jQuery('body').data('zoomhaus.arrow-nav') === undefined ){
-
-            jQuery(document).keydown(function(evt){
-
-                switch( evt.which ){
-                    case 37 : // left
-                        $(document).trigger('zoomhaus.previous')
-                        break
-
-                    case 39 : // right
-                        $(document).trigger('zoomhaus.next')
-                        break
-
-                    default: return
-                }
+        // close on click
+        if( this.opts.clickToExit ){
+            document.body.addEventListener('click', evt => {
+                this.close()
             })
-
-            jQuery('body').data('zoomhaus.arrow-nav', true)
         }
 
-        // return $elems
-        return this
+        if( this.opts.esc ){
+            document.body.addEventListener('keydown', evt => {
+                if( evt.which == 27 ){ // Esc key
+                    this.close()
+                }
+            })
+        }
 
+        if( this.opts.arrows ){
+            document.body.addEventListener('keydown', evt => {
+                if( evt.which == 37 ){ // left
+                    this.previous()
+                }
+                if( evt.which == 39 ){ // right
+                    this.next()
+                }
+            })
+        }
     }
 
-}(jQuery))
+    close(){
+        closeOverlay( this.opts )
+    }
+
+    goto(index){
+        if( ! q('.zoomhaus-target.active') || qa('.zoomhaus-target').length <= 1 ) return
+
+        // keep index within bounds
+        while( index < 0 || index >= this.elements.length ){
+            index += index < 0 ? this.elements.length : -this.elements.length
+        }
+
+        // save references
+        const outgoing = q('.zoomhaus-target.active')
+        const incoming = this.elements[index]
+
+        // set classes
+        outgoing.classList.remove('active')
+        incoming.classList.add('active')
+
+        // set index
+        this.index = index
+
+        // run callback
+        if( this.opts.onGoTo ){
+            this.opts.onGoTo(this, outgoing, incoming)
+        } else {
+            // Built-in transition - replaces current image with desired one
+
+            // Set displayed image src and srcset to target
+            const zhImage = q('.zoomhaus-image')
+            zhImage.setAttribute( 'src', incoming.getAttribute('src') )
+            if( incoming.hasAttribute('srcset') ){
+                zhImage.setAttribute( 'srcset', incoming.getAttribute('srcset') )
+            }
+
+            // Center the image
+            const width = Math.min( window.innerWidth - this.opts.marginX * 2, (parseInt(incoming.getAttribute('width')) || incoming.getBoundingClientRect().width) );
+            zhImage.style.width = `${ width }px`
+        }
+    }
+
+    next(){
+        this.goto(this.index + 1)
+    }
+
+    previous(){
+        this.goto(this.index - 1)
+    }
+}
+
+window.Zoomhaus = Zoomhaus

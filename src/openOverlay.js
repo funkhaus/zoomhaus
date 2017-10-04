@@ -1,51 +1,60 @@
-export default ( target, settings, $, winDimensions ) => {
+import { setDefault, q, qa, createAndAppend } from './utils'
 
-    const $target = $(target)
+export default ( target, settings, winDimensions ) => {
+
+    // abort if there is already an instance open or if we're animating
+    if ( document.body.classList.contains('zoomhaus-open')
+        || document.body.classList.contains('zoomhaus-transitioning') )
+        return
 
     // add active class to target
-    $target.addClass('active')
+    target.classList.add('active')
 
     // get rectangle for image as it sits in the page
-    var imgRect = $target.get(0).getBoundingClientRect()
+    var imgRect = target.getBoundingClientRect()
 
+    // build styling
     let css = {
-        'webkit-transform': `translate(${imgRect.left}px, ${imgRect.top}px)`,
+        '-webkit-transform': `-webkit-translate(${imgRect.left}px, ${imgRect.top}px)`,
         transform: `translate(${imgRect.left}px, ${imgRect.top}px)`,
         position: 'absolute',
-        width: imgRect.width,
-        height: 'auto'
+        width: `${imgRect.width}px`,
+        height: 'auto',
     }
 
     // determine if we need any clipping
     if( settings.grow ){
-
-        // Calculate the aspect ratio of the parent
-        var parentHeight = $target.parent().innerHeight();
-        var diff = $target.innerHeight() - parentHeight;
-        css['-webkit-clip-path'] = 'inset(' + (diff / 2) + 'px 0)';
+        // Calculate the height difference between this and parent container
+        var parentHeight = target.parentNode.getBoundingClientRect().height;
+        var diff = target.getBoundingClientRect().height - parentHeight;
+        css['-webkit-clip-path'] = '-webkit-inset(' + (diff / 2) + 'px 0)';
         css['clip-path'] = 'inset(' + (diff / 2) + 'px 0)';
-
     }
 
     // clone target image, position it
-    const $newImg = $(target).clone()
-        .css( css )
-        .removeClass('active zoomhaus-target')
+    const newImg = target.cloneNode()
+    newImg.classList.remove('active')
+    newImg.classList.remove('zoomhaus-target')
 
+    for( let prop in css ){
+        newImg.style[prop] = css[prop]
+    }
 
-
-    // add image into overlay
-    $('#zoomhaus-overlay').show()
-    $('#zoomhaus-overlay .image-slot').html( $newImg.addClass('zoomhaus-image') )
+    // add image to overlay
+    q('#zoomhaus-overlay').style.display = 'block'
+    q('#zoomhaus-overlay').classList.add('displayed')
+    q('#zoomhaus-overlay .image-slot').appendChild(newImg)
 
     // calculate natural aspect ratio for image
     // aspect ratio > 1: image is portrait
     // aspect ratio < 1: image is landscape
-    var naturalRatio = Math.max( $(target).attr('height'), $(target).height() ) / Math.max( $(target).attr('width'), $(target).width() )
+    const height = target.getAttribute('height') || target.getBoundingClientRect().height
+    const width = target.getAttribute('width') || target.getBoundingClientRect().width
+    const naturalRatio = height / width
 
     // get target dimensions
-    var targetWidth = Math.min( (winDimensions.width - settings.marginX * 2), $target.attr('width') )
-    var targetHeight = Math.min( (winDimensions.height - settings.marginY * 2), $target.attr('height') )
+    let targetHeight = Math.min( (window.innerHeight - settings.marginY * 2), height )
+    let targetWidth = Math.min( (window.innerWidth - settings.marginX * 2), width )
 
     // if fitting to width is too tall...
     if ( targetWidth * naturalRatio > targetHeight ){
@@ -58,13 +67,17 @@ export default ( target, settings, $, winDimensions ) => {
     }
 
     // calculate transform properties
-    var scale = targetWidth / imgRect.width;
-    var antiScale = imgRect.width / targetWidth;
+    const scale = targetWidth / width;
+    const antiScale = width / targetWidth;
 
     // add body classes
-    $('body').addClass('zoomhaus-open')
-    $newImg.addClass('zoomhaus-center').css({
-        width: targetWidth
-    })
+    document.body.classList.add('zoomhaus-open')
+    // wait a few ms to add image classes so that animation applies
+    setTimeout(() => {
+        newImg.style.width = `${ targetWidth }px`
+        newImg.classList.add('zoomhaus-center')
+        newImg.classList.add('zoomhaus-image')
+    }, 25)
+
 
 }
