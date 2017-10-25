@@ -63,8 +63,12 @@ export default ( target, settings, $, winDimensions ) => {
 
     // add body classes
     $('body').addClass('zoomhaus-open')
-    $newImg.addClass('zoomhaus-center').css({
-        width: targetWidth
-    })
+    $newImg.addClass('zoomhaus-center')
+    setTimeout(function(){
+        $newImg.css({
+            width: targetWidth
+        })
+        console.log(targetWidth)
+    }, 600)
 
 }
