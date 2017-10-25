@@ -1,3 +1,15 @@
+let scrollOffset = 0,
+    target = false,
+    lastScrollY = 0
+
+function matchScroll(evt){
+    const latestScrollY = window.pageYOffset || document.body.scrollTop
+    const overlay = document.getElementById('zoomhaus-overlay')
+    scrollOffset += lastScrollY - latestScrollY
+    lastScrollY = latestScrollY
+    overlay.style.top = scrollOffset + 'px'
+}
+
 export default ( $, settings ) => {
 
     // remove body class
@@ -29,12 +41,20 @@ export default ( $, settings ) => {
 
     $('#zoomhaus-overlay img').css(css)
 
+    // start matching scroll
+    scrollOffset = 0
+    lastScrollY = window.pageYOffset || document.body.scrollTop
+    document.getElementById('zoomhaus-overlay').style.top = `${ scrollOffset }px`
+    window.addEventListener('scroll', matchScroll)
+
     setTimeout(function(){
         $('#zoomhaus-overlay .image-slot').empty();
         $('#zoomhaus-overlay').hide()
         $('#zoomhaus-overlay .image-slot').empty()
         $('.zoomhaus-target.active').removeClass('active')
         $('body').removeClass('zoomhaus-transitioning')
+        window.removeEventListener('scroll', matchScroll)
+        document.getElementById('zoomhaus-overlay').style.top = 0
 
     }, 600);
     $('#zoomhaus-overlay img').removeClass('zoomhaus-center');
