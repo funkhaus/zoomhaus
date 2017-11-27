@@ -1,6 +1,6 @@
 {
   "name": "zoomhaus",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Smooth takeover image zoom effect.",
   "author": "Sander Moolin, John Robson, Funkhaus",
   "license": "MIT",
@@ -15,6 +15,7 @@
     "url": "https://cvgellhorn@github.com/cvgellhorn/webpack-boilerplate.git"
   },
   "dependencies": {
+    "insert-css": "^2.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",

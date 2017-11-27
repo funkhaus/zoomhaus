@@ -1,6 +1,8 @@
 import closeOverlay from './closeOverlay'
 import openOverlay from './openOverlay'
 import { setDefault, q, qa, createAndAppend } from './utils'
+import defaultStyle from './style'
+import insertCss from 'insert-css'
 
 class Zoomhaus {
     constructor(selector, options, callback) {
@@ -16,11 +18,18 @@ class Zoomhaus {
             clickToExit: setDefault(options, 'clickToExit', true),       // Does a click anywhere close the overlay when it's open?
             closeOnScroll: setDefault(options, 'closeOnScroll', true),   // Does a scroll close the open overlay?
             onGoTo: setDefault(options, 'goto', false),                  // Callback for zoomhaus.goto event. Accepts 3 params: Zoomhaus instance, outgoing element, and incoming element.
-            close: setDefault(options, 'close', false)                   // Selectors that close the overlay when clicked
+            close: setDefault(options, 'close', false),                  // Selectors that close the overlay when clicked
+            style: setDefault(options, 'style', '')                      // CSS to be added to Zoomhaus defaults. Set to `false` to prevent any style injection.
         }
 
         // add the main overlay if it doesn't exist
+        // this also acts as a general run-only-once init function
         if ( ! q('body > #zoomhaus-overlay') ){
+
+            // inserts style
+            if( this.opts.style !== false ){
+                insertCss(defaultStyle + this.opts.style)
+            }
 
             // look for the template if we have one
             let template = ''

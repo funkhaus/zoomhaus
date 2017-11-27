@@ -2,8 +2,15 @@
 Vanilla JS, zero-dependency takeover zoom effect like the images [here](http://funkhaus.us/14153/an-afternoon-with-an-la-icon-the-stahl-house/).
 
 ## How
+### Webpack
+```js
+import Zoomhaus from 'zoomhaus'
+
+new Zoomhaus('element-selector')
+```
+
+### Other
 1. Include `dist/bundle.js`.
-1. Include the contents of `./zoomhaus.css` in your own CSS.
 1. `new Zoomhaus('element-selector')` on any elements you want to zoom on click.
 
 That's it!
@@ -38,7 +45,10 @@ new Zoomhaus('element-selector', {
     onGoTo: false,      
 
     // Selectors that close the overlay when clicked            
-    close: false               
+    close: false,
+
+    // CSS to be added to Zoomhaus defaults. Set to `false` to prevent any style injection.
+    style: ''               
 })
 ```
 
@@ -72,10 +82,11 @@ z.methodName()
 
 -------
 
-Version 3.0.0
+Version 3.1.0
 
 http://funkhaus.us
 
+* 3.1.0 - Removed need for extra CSS file
 * 3.0.0 - Migrated to vanilla JS
 * 2.1.1 - Fixed a click-to-close bug
 * 2.1.0 - Trimmed down lots of extra code, made class declarations central
