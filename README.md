@@ -82,10 +82,11 @@ z.methodName()
 
 -------
 
-Version 3.1.0
+Version 3.1.1
 
 http://funkhaus.us
 
+* 3.1.1 - Fixed export bug
 * 3.1.0 - Removed need for extra CSS file
 * 3.0.0 - Migrated to vanilla JS
 * 2.1.1 - Fixed a click-to-close bug

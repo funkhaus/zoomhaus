@@ -1,11 +1,11 @@
 {
   "name": "zoomhaus",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Smooth takeover image zoom effect.",
   "author": "Sander Moolin, John Robson, Funkhaus",
   "license": "MIT",
   "homepage": "https://github.com/funkhaus/zoomhaus",
-  "main": "dist/bundle.js",
+  "main": "src/",
   "scripts": {
     "dev": "NODE_ENV=dev webpack-dev-server --progress --config webpack.config.dev.js --open",
     "build": "webpack -p --progress --config webpack.config.build.js"

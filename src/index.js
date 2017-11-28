@@ -4,7 +4,7 @@ import { setDefault, q, qa, createAndAppend } from './utils'
 import defaultStyle from './style'
 import insertCss from 'insert-css'
 
-class Zoomhaus {
+export default class {
     constructor(selector, options, callback) {
         options = options || {}
 
@@ -171,5 +171,3 @@ class Zoomhaus {
         this.goto(this.index - 1)
     }
 }
-
-window.Zoomhaus = Zoomhaus
